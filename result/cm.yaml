@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: result-config
+  namespace: vote-app
+data:
+  POSTGRES_HOST: "db.vote-app.svc.cluster.local"

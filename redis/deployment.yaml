@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+  namespace: vote-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+      namespace: vote-app
+  template:
+    metadata:
+      labels:
+        app: redis
+        namespace: vote-app
+    spec:
+      containers:
+      - name: redis
+        image: redis:alpine
+        ports:
+        - containerPort: 6379
+
+        volumeMounts:
+        - mountPath: /data
+          name: redis-data
+      volumes:
+      - name: redis-data
+        emptyDir: {}

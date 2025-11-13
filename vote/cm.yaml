@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vote-config
+  namespace: vote-app
+data:
+  OPTION_A: Coffee
+  OPTION_B: Tea
+  REDIS_HOST: redis.vote-app.svc.cluster.local

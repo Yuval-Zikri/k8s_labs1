@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment 
+metadata: 
+ name: db
+ namespace: vote-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: db
+      namespace: vote-app
+  template:
+   metadata:
+     labels:
+       app: db
+       namespace: vote-app
+   spec:
+    containers:
+    - name: db
+      image: postgres:15-alpine
+      ports: 
+      - containerPort: 5432
+      env:
+          - name: POSTGRES_USER
+            valueFrom:
+              configMapKeyRef:
+                name: db-config
+                key: POSTGRES_USER
+          - name: POSTGRES_DB
+            valueFrom:
+              configMapKeyRef:
+                name: db-config
+                key: POSTGRES_DB
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: db-secret
+                key: POSTGRES_PASSWORD
+      volumeMounts:
+      - name: db-data
+        mountPath: /var/lib/postgresql/data
+    volumes:
+    - name: db-data
+      persistentVolumeClaim:
+        claimName: db-data
+      
