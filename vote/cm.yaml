@@ -4,6 +4,6 @@ metadata:
   name: vote-config
   namespace: vote-app
 data:
-  OPTION_A: Coffee
-  OPTION_B: Tea
+  OPTION_A: Cats
+  OPTION_B: Dogs
   REDIS_HOST: redis.vote-app.svc.cluster.local

@@ -20,6 +20,46 @@ spec:
         image: dockersamples/examplevotingapp_result:latest
         ports:
         - containerPort: 80
-  
+
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 15
+          periodSeconds: 10
+
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 5
+
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+          limits:
+            memory: "128Mi"
+            cpu: "100m"
+            
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 1000
+    
+
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: result-pdb
+  namespace: vote-app
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: result
+
+          
       
     

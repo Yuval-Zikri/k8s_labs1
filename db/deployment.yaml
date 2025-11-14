@@ -15,6 +15,9 @@ spec:
        app: db
        namespace: vote-app
    spec:
+    securityContext:
+     fsGroup: 999   
+
     containers:
     - name: db
       image: postgres:15-alpine
@@ -36,6 +39,33 @@ spec:
               secretKeyRef:
                 name: db-secret
                 key: POSTGRES_PASSWORD
+        
+      livenessProbe:
+        exec:
+          command:
+             - pg_isready
+             - "-U"
+             - postgres
+        initialDelaySeconds: 15
+        periodSeconds: 10
+
+      readinessProbe:
+        exec:
+          command:
+             - pg_isready
+             - "-U"
+             - postgres
+        initialDelaySeconds: 5
+        periodSeconds: 5
+
+      resources:
+        requests:
+           memory: "64Mi"
+           cpu: "50m"
+        limits:
+           memory: "128Mi"
+           cpu: "100m"
+
       volumeMounts:
       - name: db-data
         mountPath: /var/lib/postgresql/data
@@ -43,4 +73,15 @@ spec:
     - name: db-data
       persistentVolumeClaim:
         claimName: db-data
-      
+
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: db-pdb
+  namespace: vote-app
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app: db
